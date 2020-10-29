@@ -1,0 +1,11 @@
+# vim
+*.swp
+*.swo
+
+# temp files
+*.tmp
+
+# log files
+*.log
+*.out
+.Rproj.user
