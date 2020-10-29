@@ -8,4 +8,5 @@
 # log files
 *.log
 *.out
-.Rproj.user
+*.Rproj.user
+*.Rproj
