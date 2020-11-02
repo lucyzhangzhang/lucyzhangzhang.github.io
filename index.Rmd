@@ -1,5 +1,39 @@
 ---
 title: "Homepage"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
 ---
 
 Homepage about the website
+
+# Tabs {.tabset}
+
+## Tab1
+
+Things 1
+
+## Tab2 {.tabset}
+
+Things2
+
+### Nested Tabs
+
+One nested tab 
+
+### Nested Tabs
+
+Here are nested tabs?
+
+
+## Tab3
+
+Things3
+
+### fourth
+ Thing4
+ 
+# {.unlisted .unnumbered .toc-ignore}
+ 
+# No more tabs

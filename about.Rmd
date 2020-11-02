@@ -4,4 +4,7 @@ output:
   html_document
 ---
 
-More about this website.
+## Lucy Zhang
+PhD Candidate   
+Department of Human Genetics  
+McGill University  
