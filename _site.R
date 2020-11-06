@@ -2,6 +2,7 @@
 suppressPackageStartupMessages({
   library(tidyverse)
   library(stringr)
+  library(plotly)
 })
 
 

@@ -6,8 +6,6 @@ output:
     toc_float: yes
 ---
 
-Homepage about the website
-
 # Tabs {.tabset}
 
 ## Tab1

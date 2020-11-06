@@ -1,0 +1,24 @@
+---
+title: "10T"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+```{r load data, include = F}
+library(plotly)
+load("D:/PhD/Analysis/10T/graphs.RData")
+```
+# PCAs
+
+<details>
+<summary>Variances</summary>
+```{r variances plot, echo = F, warning = F}
+var <- t(percentage/100)
+var <- data.frame(PC = row.names(var)[1:10], val = var[1:10,1])
+var$PC <- factor(var$PC, levels = var$PC)
+plot_ly(data = var, x = as.factor(var$PC), y = ~val, type = "bar") %>%
+  layout(xaxis = list(title = "Principal Component"), 
+         yaxis = list(title = "Proportion of Variance"))
+```
+</details>

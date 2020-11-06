@@ -2,8 +2,10 @@ name: "Lucy Stuff"
 navbar:
   title: "Lucy Stuff"
   left:
-    - text: "Stuff"
-      href: stuff.html
+#    - text: "Stuff"
+#      href: stuff.html
+    - text: "10T"
+      href: 10T.html
     - text: "About"
       href: about.html
 output_dir: "."
