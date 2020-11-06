@@ -11,6 +11,8 @@ load("D:/PhD/Analysis/10T/graphs.RData")
 ```
 # PCAs
 
+Instead of regularized log transformation (`rlogTransformation()`), I did variance stabilizing transformation (`varianceStabilizingTransformation()`) because my computer can't handle it.  
+
 <details>
 <summary>Variances</summary>
 ```{r variances plot, echo = F, warning = F}
@@ -21,4 +23,20 @@ plot_ly(data = var, x = as.factor(var$PC), y = ~val, type = "bar") %>%
   layout(xaxis = list(title = "Principal Component"), 
          yaxis = list(title = "Proportion of Variance"))
 ```
-</details>
+</details>  
+
+***
+
+## Batch correction
+Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
+```{r pca plots, echo = F, warning = F}
+plot_pca <- function(scores, percentage, title = NULL) {
+  
+}
+plot_ly(data = scores, x = scores$PC1, y = scores$PC2, z = scores$PC3, text = rownames(scores),
+        type = "scatter3d", mode = "markers", marker = list(size = 5), color = condition) %>%
+  layout(title = paste0("PCA: ", "test"),
+         scene = list(xaxis = list(title = paste0("PC1 (", percentage[1], "%)")), 
+                      yaxis = list(title = paste0("PC2 (", percentage[2], "%)")),
+                      zaxis = list(title = paste0("PC3 (", percentage[3], "%)"))))
+```
