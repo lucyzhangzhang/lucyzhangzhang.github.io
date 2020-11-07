@@ -5,38 +5,86 @@ output:
     toc: yes
     toc_float: yes
 ---
-```{r load data, include = F}
+```{r load data, include = F, warinings = F}
 library(plotly)
 load("D:/PhD/Analysis/10T/graphs.RData")
 ```
-# PCAs
+C3H/10T mouse embryonic cells are generated from C3H/HeJ mice. Are sensitive to inhibition of cell division and have unusual stability after prolonged culture. 10T cell line is used to study cancer, cardiovascular biology and infectious diseases.  
 
-Instead of regularized log transformation (`rlogTransformation()`), I did variance stabilizing transformation (`varianceStabilizingTransformation()`) because my computer can't handle it.  
+# PCAs {.tabset .tabset-pills}
+
+Instead of regularized log transformation (`rlogTransformation()`) on the reads, I did variance stabilizing transformation (`varianceStabilizingTransformation()`) because my computer crashes with rld with insufficient memory. Principal components were calculated using the top 500 genes with the greatest variance.
 
 <details>
 <summary>Variances</summary>
 ```{r variances plot, echo = F, warning = F}
-var <- t(percentage/100)
-var <- data.frame(PC = row.names(var)[1:10], val = var[1:10,1])
-var$PC <- factor(var$PC, levels = var$PC)
-plot_ly(data = var, x = as.factor(var$PC), y = ~val, type = "bar") %>%
-  layout(xaxis = list(title = "Principal Component"), 
-         yaxis = list(title = "Proportion of Variance"))
+  var <- t(percentage/100)
+  varENS <- t(ENSplots$perc/100)
+  varother <- t(otherplots$perc/100)
+  vars <- data.frame(var, varENS, varother)
+  colnames(vars) <- c("var", "varENS", "varother")
+  vars <- data.frame(PC = row.names(vars)[1:10], vars[1:10,])
+  vars$PC <- factor(vars$PC, levels = vars$PC)
+  
+  plot_ly(data = vars, x = as.factor(vars$PC), y = ~var, 
+          type = "bar", name = "All loci", showlegend = FALSE) %>%
+    add_trace(y = ~varENS, name = "ENs annot", 
+              visible = F, showlegend = FALSE) %>%
+    add_trace(y = ~varother, name = "Other loci", 
+              visible = F, showlegend = FALSE) %>%
+    layout(xaxis = list(title = "Principal Component"), 
+           yaxis = list(title = "Proportion of Variance",
+                        range = c(0,1)),
+           updatemenus = list(
+             list(
+               y = 0.8,
+             buttons = list(
+               list(method = "restyle",
+                    args = list("visible", list(T, F, F)),
+                    label = "All loci"),
+               list(method = "restyle",
+                    args = list("visible", list(F, T, F)),
+                    label = "ENS annot"),
+               list(method = "restyle",
+                    args = list("visible", list(F, F, T)),
+                    label = "RepeatMasker")
+             )
+             )
+           ))
+
 ```
 </details>  
 
 ***
 
 ## Batch correction
-Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
-```{r pca plots, echo = F, warning = F}
-plot_pca <- function(scores, percentage, title = NULL) {
-  
-}
-plot_ly(data = scores, x = scores$PC1, y = scores$PC2, z = scores$PC3, text = rownames(scores),
+PCA of only the top 500 genes with the highest variance. Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
+```{r pca plots, echo = F, warnings = F}
+plot_pca <- function(scores, percentage, title = "") {
+  plot_ly(data = scores, x = scores$PC1, y = scores$PC2, z = scores$PC3, text = rownames(scores),
         type = "scatter3d", mode = "markers", marker = list(size = 5), color = condition) %>%
-  layout(title = paste0("PCA: ", "test"),
+  layout(title = paste0("PCA: ", title),
          scene = list(xaxis = list(title = paste0("PC1 (", percentage[1], "%)")), 
                       yaxis = list(title = paste0("PC2 (", percentage[2], "%)")),
-                      zaxis = list(title = paste0("PC3 (", percentage[3], "%)"))))
+                      zaxis = list(title = paste0("PC3 (", percentage[3], "%)")))) 
+}
+
+plot_pca(scores, percentage, title = "Batch Correction (all loci)")
+#  %>% add_text(textposition = "top")
 ```
+
+## ENS
+```{r ENS pca, echo = F, warnings = F}
+
+plot_pca(ENSplots$scores, ENSplots$perc, title = "ENS annotation")
+#  %>% add_text(textposition = "top")
+```
+
+## RepeatMasker
+```{r other pca, echo = F, warnings = F}
+
+plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker")
+#  %>% add_text(textposition = "top")
+```
+
+### Breakdown of genomic features

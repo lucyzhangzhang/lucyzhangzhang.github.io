@@ -12,7 +12,7 @@ output:
 
 Things 1
 
-## Tab2 {.tabset}
+## Tab2 {.tabset .tabset-pills}
 
 Things2
 
