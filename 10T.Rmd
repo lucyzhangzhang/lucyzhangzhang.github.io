@@ -11,14 +11,14 @@ load("D:/PhD/Analysis/10T/graphs.RData")
 ```
 C3H/10T mouse embryonic cells are generated from C3H/HeJ mice. Are sensitive to inhibition of cell division and have unusual stability after prolonged culture. 10T cell line is used to study cancer, cardiovascular biology and infectious diseases.  
 
-# PCAs {.tabset .tabset-pills}
+## PCAs 
 
 Instead of regularized log transformation (`rlogTransformation()`) on the reads, I did variance stabilizing transformation (`varianceStabilizingTransformation()`) because my computer crashes with rld with insufficient memory. Principal components were calculated using the top 500 genes with the greatest variance.
 
 <details>
 <summary>Variances</summary>
 ```{r variances plot, echo = F, warning = F}
-  var <- t(percentage/100)
+  var <- t(ddsplots$perc/100)
   varENS <- t(ENSplots$perc/100)
   varother <- t(otherplots$perc/100)
   vars <- data.frame(var, varENS, varother)
@@ -56,8 +56,9 @@ Instead of regularized log transformation (`rlogTransformation()`) on the reads,
 </details>  
 
 ***
+## {.tabset .tabset-pills}  
 
-## Batch correction
+### Batch correction
 PCA of only the top 500 genes with the highest variance. Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
 ```{r pca plots, echo = F, warnings = F}
 plot_pca <- function(scores, percentage, title = "") {
@@ -69,22 +70,22 @@ plot_pca <- function(scores, percentage, title = "") {
                       zaxis = list(title = paste0("PC3 (", percentage[3], "%)")))) 
 }
 
-plot_pca(scores, percentage, title = "Batch Correction (all loci)")
+plot_pca(ddsplots$scores, ddsplots$perc, title = "Batch Correction (all loci)")
 #  %>% add_text(textposition = "top")
 ```
 
-## ENS
+### ENS
 ```{r ENS pca, echo = F, warnings = F}
 
 plot_pca(ENSplots$scores, ENSplots$perc, title = "ENS annotation")
 #  %>% add_text(textposition = "top")
 ```
 
-## RepeatMasker
+### RepeatMasker
 ```{r other pca, echo = F, warnings = F}
 
 plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker")
 #  %>% add_text(textposition = "top")
 ```
 
-### Breakdown of genomic features
+## Breakdown of genomic features
