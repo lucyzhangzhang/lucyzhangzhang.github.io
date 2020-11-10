@@ -69,21 +69,21 @@ plot_pca <- function(scores, percentage, title = "") {
                       zaxis = list(title = paste0("PC3 (", percentage[3], "%)")))) 
 }
 
-plot_pca(ddsplots$scores, ddsplots$perc, title = "Batch Correction (all loci)")
+plot_pca(ddsplots$scores, ddsplots$perc, title = "Batch Correction (top 500 of all entries)")
 #  %>% add_text(textposition = "top")
 ```
 
 ### ENS
 ```{r ENS pca, echo = F, warnings = F}
 
-plot_pca(ENSplots$scores, ENSplots$perc, title = "ENS annotation")
+plot_pca(ENSplots$scores, ENSplots$perc, title = "ENS annotation Only")
 #  %>% add_text(textposition = "top")
 ```
 
 ### RepeatMasker
 ```{r other pca, echo = F, warnings = F}
 
-plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker")
+plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker entries only")
 #  %>% add_text(textposition = "top")
 ```
 
