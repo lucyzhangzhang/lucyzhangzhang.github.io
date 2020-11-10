@@ -11,9 +11,9 @@ load("D:/PhD/Analysis/10T/graphs.RData")
 ```
 C3H/10T mouse embryonic cells are generated from C3H/HeJ mice. Are sensitive to inhibition of cell division and have unusual stability after prolonged culture. 10T cell line is used to study cancer, cardiovascular biology and infectious diseases.  
 
-## PCAs 
+## PCAs {.tabset .tabset-pills}
 
-Instead of regularized log transformation (`rlogTransformation()`) on the reads, I did variance stabilizing transformation (`varianceStabilizingTransformation()`) because my computer crashes with rld with insufficient memory. Principal components were calculated using the top 500 genes with the greatest variance.
+Instead of regularized log transformation (`rlogTransformation()`) on the reads, I did variance stabilizing transformation (`varianceStabilizingTransformation()`) because my computer crashes with rld with insufficient memory. Principal components were calculated using the top 500 genes with the greatest variance between samples.
 
 <details>
 <summary>Variances</summary>
@@ -56,7 +56,6 @@ Instead of regularized log transformation (`rlogTransformation()`) on the reads,
 </details>  
 
 ***
-## {.tabset .tabset-pills}  
 
 ### Batch correction
 PCA of only the top 500 genes with the highest variance. Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
@@ -89,3 +88,10 @@ plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker")
 ```
 
 ## Breakdown of genomic features
+In the top 500 genes with the highest variance between the samples. The y-axis represents the variance of these genes between samples. Variance is calculated from the normalized counts after performing `varianceStabilizingTransformation()`.  
+```{r breakdown, echo = F, warnings = F}
+plot_ly(rpmk_ordered, x = rpmk_ordered$name, y = rpmk_ordered$dds, color = rpmk_ordered$X4,
+        type = "bar") %>%
+  layout(xaxis = list(title = "Feature", showticklabels = F),
+             yaxis = list(title = "Variance"))
+```
