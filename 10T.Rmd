@@ -5,9 +5,14 @@ output:
     toc: yes
     toc_float: yes
 ---
-```{r load data, include = F, warinings = F}
+```{r load data, include = F, warnings = F}
 library(plotly)
+library(heatmaply)
+library(ggplot2)
+library(gplots)
 load("D:/PhD/Analysis/10T/graphs.RData")
+load("D:/PhD/Analysis/10T/noDec.RData")
+
 ```
 C3H/10T mouse embryonic cells are generated from C3H/HeJ mice. Are sensitive to inhibition of cell division and have unusual stability after prolonged culture. 10T cell line is used to study cancer, cardiovascular biology and infectious diseases.  
 
@@ -18,12 +23,15 @@ Instead of regularized log transformation (`rlogTransformation()`) on the reads,
 <details>
 <summary>Variances</summary>
 ```{r variances plot, echo = F, warning = F}
-  var <- t(ddsplots$perc/100)
-  varENS <- t(ENSplots$perc/100)
-  varother <- t(otherplots$perc/100)
-  vars <- data.frame(var, varENS, varother)
-  colnames(vars) <- c("var", "varENS", "varother")
-  vars <- data.frame(PC = row.names(vars)[1:10], vars[1:10,])
+  var <- t(ddsplots$perc/100)[1:10]
+  varENS <- t(ENSplots$perc/100)[1:10]
+  varother <- t(otherplots$perc/100)[1:10]
+  varD <- t(ddsplotsD$perc/100)[1:10]
+  varENSD <- t(ENSplotsD$perc/100)[1:10]
+  varotherD <- t(otherplotsD$perc/100)[1:10]
+  vars <- data.frame(var, varENS, varother, varD, varENSD, varotherD)
+  colnames(vars) <- c("var", "varENS", "varother", "varD", "varENSD", "varotherD")
+  vars <- data.frame(PC = row.names(vars), vars)
   vars$PC <- factor(vars$PC, levels = vars$PC)
   
   plot_ly(data = vars, x = as.factor(vars$PC), y = ~var, 
@@ -31,6 +39,12 @@ Instead of regularized log transformation (`rlogTransformation()`) on the reads,
     add_trace(y = ~varENS, name = "ENs annot", 
               visible = F, showlegend = FALSE) %>%
     add_trace(y = ~varother, name = "Other loci", 
+              visible = F, showlegend = FALSE) %>%
+    add_trace(y = ~varD, name = "All loci-DAC", 
+              visible = F, showlegend = FALSE) %>%
+    add_trace(y = ~varENSD, name = "ENS annot-DAC", 
+              visible = F, showlegend = FALSE) %>%
+    add_trace(y = ~varotherD, name = "Other loci-DAC", 
               visible = F, showlegend = FALSE) %>%
     layout(xaxis = list(title = "Principal Component"), 
            yaxis = list(title = "Proportion of Variance",
@@ -40,14 +54,23 @@ Instead of regularized log transformation (`rlogTransformation()`) on the reads,
                y = 0.8,
              buttons = list(
                list(method = "restyle",
-                    args = list("visible", list(T, F, F)),
+                    args = list("visible", list(T, F, F, F, F, F)),
                     label = "All loci"),
                list(method = "restyle",
-                    args = list("visible", list(F, T, F)),
+                    args = list("visible", list(F, T, F, F, F, F)),
                     label = "ENS annot"),
                list(method = "restyle",
-                    args = list("visible", list(F, F, T)),
-                    label = "RepeatMasker")
+                    args = list("visible", list(F, F, T, F, F, F)),
+                    label = "RepeatMasker"),
+               list(method = "restyle",
+                    args = list("visible", list(F, F, F, T, F, F)),
+                    label = "All loci-DAC"),
+               list(method = "restyle",
+                    args = list("visible", list(F, F, F, F, T, F)),
+                    label = "ENS annot-DAC"),
+               list(method = "restyle",
+                    args = list("visible", list(F, F, F, F, F, T)),
+                    label = "RepeatMasker-DAC")
              )
              )
            ))
@@ -58,9 +81,9 @@ Instead of regularized log transformation (`rlogTransformation()`) on the reads,
 ***
 
 ### Batch correction
-PCA of only the top 500 genes with the highest variance. Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
 ```{r pca plots, echo = F, warnings = F}
-plot_pca <- function(scores, percentage, title = "") {
+conditionN <- condition
+plot_pca <- function(scores, percentage, title = "", condition = conditionN) {
   plot_ly(data = scores, x = scores$PC1, y = scores$PC2, z = scores$PC3, text = rownames(scores),
         type = "scatter3d", mode = "markers", marker = list(size = 5), color = condition) %>%
   layout(title = paste0("PCA: ", title),
@@ -72,6 +95,7 @@ plot_pca <- function(scores, percentage, title = "") {
 plot_pca(ddsplots$scores, ddsplots$perc, title = "Batch Correction (top 500 of all entries)")
 #  %>% add_text(textposition = "top")
 ```
+PCA of only the top 500 genes with the highest variance. Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
 
 ### ENS
 ```{r ENS pca, echo = F, warnings = F}
@@ -86,12 +110,71 @@ plot_pca(ENSplots$scores, ENSplots$perc, title = "ENS annotation Only")
 plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker entries only")
 #  %>% add_text(textposition = "top")
 ```
+The RepeatMasker PCa looks like the "All loci" PCA because it turns out that the DAC vs. no DAC treatment defines most of PC1 and the top genes with the highest contribution to the loadings of PC1 turn out to be repetitive elements (see the [breakdown of genomic features][Breakdown of genomic features])
 
-## Breakdown of genomic features
-In the top 500 genes with the highest variance between the samples. The y-axis represents the variance of these genes between samples. Variance is calculated from the normalized counts after performing `varianceStabilizingTransformation()`.  
+### All loci-DAC
+```{r allD pca, echo = F, warnings = F}
+
+plot_pca(ddsplotsD$scores, ddsplotsD$perc, 
+         title = "All loci minus DAC treat", 
+         condition = conditionD)
+```
+
+### ENS annot-DAC
+```{r ENSD pca, echo = F, warnings = F}
+
+plot_pca(ENSplotsD$scores, ENSplotsD$perc, 
+         title = "ENS annot minus DAC treat", 
+         condition = conditionD)
+```
+
+### RepeatMasker-DAC
+```{r otherD pca, echo = F, warnings = F}
+
+plot_pca(otherplotsD$scores, otherplotsD$perc, 
+         title = "RPMS minus DAC treat", 
+         condition = conditionD)
+```
+
+## Breakdown of genomic features {.tabset .tabset-pills}
+In the top 500 genes with the highest variance between the samples. The y-axis represents the variance of these genes between samples. Variance is calculated from the normalized counts after performing `varianceStabilizingTransformation()`. 
+
+### All samples 
 ```{r breakdown, echo = F, warnings = F}
 plot_ly(rpmk_ordered, x = rpmk_ordered$name, y = rpmk_ordered$dds, color = rpmk_ordered$X4,
         type = "bar") %>%
   layout(xaxis = list(title = "Feature", showticklabels = F),
              yaxis = list(title = "Variance"))
+```
+
+### DAC removed
+```{r breakdownD, echo = F, warnings = F}
+plot_ly(rpmkD, x = rpmkD$name, y = rpmkD$dds, color = rpmkD$X4,
+        type = "bar") %>%
+  layout(xaxis = list(title = "Feature", showticklabels = F),
+             yaxis = list(title = "Variance"))
+```
+
+## Heatmaps {.tabset .tabset-pills}
+
+### All 
+```{r DAC heatmap, echo = F, warnings = F}
+heatmaply(mat, k_row = 3, k_col = 3,
+          show_dendrogram = c(T, F),
+          grid_size = 0.01,
+          height = 900, width = 1200) %>%
+  layout(xaxis = list(tickfont = list(size = 9)),
+         yaxis = list(tickfont = list(size = 9)))
+
+```
+
+### No DAC
+```{r no DAC heatmap, echo = F, warnings = F}
+heatmaply(matD, k_row = 3, k_col = 3,
+          show_dendrogram = c(T, F),
+          grid_size = 0.01,
+          height = 900, width = 1200) %>%
+  layout(xaxis = list(tickfont = list(size = 9)),
+         yaxis = list(tickfont = list(size = 9)))
+
 ```
