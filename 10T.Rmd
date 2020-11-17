@@ -141,7 +141,7 @@ In the top 500 genes with the highest variance between the samples. The y-axis r
 
 ### All samples 
 ```{r breakdown, echo = F, warnings = F}
-plot_ly(rpmk_ordered, x = rpmk_ordered$name, y = rpmk_ordered$dds, color = rpmk_ordered$X4,
+plot_ly(rpmk_ordered, x = rpmk_ordered$name, y = rpmk_ordered$dds, color = as.factor(rpmk_ordered$X4),
         type = "bar") %>%
   layout(xaxis = list(title = "Feature", showticklabels = F),
              yaxis = list(title = "Variance"))
