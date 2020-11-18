@@ -157,6 +157,7 @@ plot_ly(rpmkD, x = rpmkD$name, y = rpmkD$dds, color = rpmkD$X4,
   layout(xaxis = list(title = "Feature", showticklabels = F),
              yaxis = list(title = "Variance"))
 ```
+
 ### TEs in each chromosome
 ```{r chr breakdown, echo = F, warnings = F}
 chrfeatures
@@ -176,6 +177,7 @@ heatmaply(mat, k_row = 3, k_col = 3,
 ```
 
 ### No DAC
+In -DAC heatmaps, it's weird that the PAs of the C3H10T12 experiment doesn't group together. The TKOs group together.  
 ```{r no DAC heatmap, echo = F, warnings = F}
 heatmaply(matD, k_row = 3, k_col = 3,
           show_dendrogram = c(T, F),
@@ -187,18 +189,20 @@ heatmaply(matD, k_row = 3, k_col = 3,
 ```
 
 
-## Differentially expressed genes
+## Differentially expressed genes 
+All samples were compared against the pooled PA samples of both `C3H10T12` and `decitabine` experiments. Pooled PA further reduces possible experiment-specific differential expression of certain genes. As expected though, H33WT had the lease number of DEGs compared to PA, as it should be. TKO had a lot of down-regulated non-gene elements.
 ```{r DEGs, echo = F, warnings = F}
 buttonplot
 ```
 
-## Persistent DEG?
+### Persistent DEG?
+Even with pooling samples there were 40 genes that were differentially expressed in all the pair-wise comparisons of samples against PA.  
 ```{r intersig, echo = F, warnings = F}
 heatmaply(as.matrix(intersig), height = 900, fontsize_row = 9) %>%
   layout(xaxis = list(tickfont = list(size = 9)),
          yaxis = list(tickfont = list(size = 9, color = "red")))
 ```
 
-## RepeatMasker locale
+### RepeatMasker locale
 Coming soon...  
 
