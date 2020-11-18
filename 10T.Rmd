@@ -13,6 +13,7 @@ library(gplots)
 load("D:/PhD/Analysis/10T/graphs.RData")
 load("D:/PhD/Analysis/10T/noDec.RData")
 
+
 ```
 C3H/10T mouse embryonic cells are generated from C3H/HeJ mice. Are sensitive to inhibition of cell division and have unusual stability after prolonged culture. 10T cell line is used to study cancer, cardiovascular biology and infectious diseases.  
 
@@ -177,4 +178,11 @@ heatmaply(matD, k_row = 3, k_col = 3,
   layout(xaxis = list(tickfont = list(size = 9)),
          yaxis = list(tickfont = list(size = 9)))
 
+```
+
+
+## Differentially expressed genes
+```{r DEGs, echo = F, warnings = F}
+load("D:/PhD/Analysis/10T/buttonplot.RData")
+buttonplot
 ```
