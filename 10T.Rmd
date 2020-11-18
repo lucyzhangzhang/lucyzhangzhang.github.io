@@ -13,6 +13,8 @@ library(gplots)
 load("D:/PhD/Analysis/10T/graphs.RData")
 load("D:/PhD/Analysis/10T/noDec.RData")
 
+load("D:/PhD/Analysis/10T/buttonplot.RData")
+
 
 ```
 C3H/10T mouse embryonic cells are generated from C3H/HeJ mice. Are sensitive to inhibition of cell division and have unusual stability after prolonged culture. 10T cell line is used to study cancer, cardiovascular biology and infectious diseases.  
@@ -155,6 +157,10 @@ plot_ly(rpmkD, x = rpmkD$name, y = rpmkD$dds, color = rpmkD$X4,
   layout(xaxis = list(title = "Feature", showticklabels = F),
              yaxis = list(title = "Variance"))
 ```
+### TEs in each chromosome
+```{r chr breakdown, echo = F, warnings = F}
+chrfeatures
+```
 
 ## Heatmaps {.tabset .tabset-pills}
 
@@ -183,6 +189,16 @@ heatmaply(matD, k_row = 3, k_col = 3,
 
 ## Differentially expressed genes
 ```{r DEGs, echo = F, warnings = F}
-load("D:/PhD/Analysis/10T/buttonplot.RData")
 buttonplot
 ```
+
+## Persistent DEG?
+```{r intersig, echo = F, warnings = F}
+heatmaply(as.matrix(intersig), height = 900, fontsize_row = 9) %>%
+  layout(xaxis = list(tickfont = list(size = 9)),
+         yaxis = list(tickfont = list(size = 9, color = "red")))
+```
+
+## RepeatMasker locale
+Coming soon...  
+
