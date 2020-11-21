@@ -5,11 +5,12 @@ output:
     toc: yes
     toc_float: yes
 ---
-```{r load data, include = F, warnings = F}
+```{r load data, include = F, warning = F}
 library(plotly)
 library(heatmaply)
 library(ggplot2)
 library(gplots)
+library(viridis)
 load("D:/PhD/Analysis/10T/graphs.RData")
 load("D:/PhD/Analysis/10T/noDec.RData")
 
@@ -84,7 +85,7 @@ Instead of regularized log transformation (`rlogTransformation()`) on the reads,
 ***
 
 ### Batch correction
-```{r pca plots, echo = F, warnings = F}
+```{r pca plots, echo = F, warning = F}
 conditionN <- condition
 plot_pca <- function(scores, percentage, title = "", condition = conditionN) {
   plot_ly(data = scores, x = scores$PC1, y = scores$PC2, z = scores$PC3, text = rownames(scores),
@@ -101,14 +102,14 @@ plot_pca(ddsplots$scores, ddsplots$perc, title = "Batch Correction (top 500 of a
 PCA of only the top 500 genes with the highest variance. Alphabet samples cluster along PC3 (6.16%), with a non-trivial contribution to total variance.  
 
 ### ENS
-```{r ENS pca, echo = F, warnings = F}
+```{r ENS pca, echo = F, warning = F}
 
 plot_pca(ENSplots$scores, ENSplots$perc, title = "ENS annotation Only")
 #  %>% add_text(textposition = "top")
 ```
 
 ### RepeatMasker
-```{r other pca, echo = F, warnings = F}
+```{r other pca, echo = F, warning = F}
 
 plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker entries only")
 #  %>% add_text(textposition = "top")
@@ -116,7 +117,7 @@ plot_pca(otherplots$scores, otherplots$perc, title = "RepeatMasker entries only"
 The RepeatMasker PCa looks like the "All loci" PCA because it turns out that the DAC vs. no DAC treatment defines most of PC1 and the top genes with the highest contribution to the loadings of PC1 turn out to be repetitive elements (see the [breakdown of genomic features][Breakdown of genomic features])
 
 ### All loci-DAC
-```{r allD pca, echo = F, warnings = F}
+```{r allD pca, echo = F, warning = F}
 
 plot_pca(ddsplotsD$scores, ddsplotsD$perc, 
          title = "All loci minus DAC treat", 
@@ -124,7 +125,7 @@ plot_pca(ddsplotsD$scores, ddsplotsD$perc,
 ```
 
 ### ENS annot-DAC
-```{r ENSD pca, echo = F, warnings = F}
+```{r ENSD pca, echo = F, warning = F}
 
 plot_pca(ENSplotsD$scores, ENSplotsD$perc, 
          title = "ENS annot minus DAC treat", 
@@ -132,7 +133,7 @@ plot_pca(ENSplotsD$scores, ENSplotsD$perc,
 ```
 
 ### RepeatMasker-DAC
-```{r otherD pca, echo = F, warnings = F}
+```{r otherD pca, echo = F, warning = F}
 
 plot_pca(otherplotsD$scores, otherplotsD$perc, 
          title = "RPMS minus DAC treat", 
@@ -143,7 +144,7 @@ plot_pca(otherplotsD$scores, otherplotsD$perc,
 In the top 500 genes with the highest variance between the samples. The y-axis represents the variance of these genes between samples. Variance is calculated from the normalized counts after performing `varianceStabilizingTransformation()`. 
 
 ### All samples 
-```{r breakdown, echo = F, warnings = F}
+```{r breakdown, echo = F, warning = F}
 plot_ly(rpmk_ordered, x = rpmk_ordered$name, y = rpmk_ordered$dds, color = as.factor(rpmk_ordered$X4),
         type = "bar") %>%
   layout(xaxis = list(title = "Feature", showticklabels = F),
@@ -151,7 +152,7 @@ plot_ly(rpmk_ordered, x = rpmk_ordered$name, y = rpmk_ordered$dds, color = as.fa
 ```
 
 ### DAC removed
-```{r breakdownD, echo = F, warnings = F}
+```{r breakdownD, echo = F, warning = F}
 plot_ly(rpmkD, x = rpmkD$name, y = rpmkD$dds, color = rpmkD$X4,
         type = "bar") %>%
   layout(xaxis = list(title = "Feature", showticklabels = F),
@@ -159,14 +160,14 @@ plot_ly(rpmkD, x = rpmkD$name, y = rpmkD$dds, color = rpmkD$X4,
 ```
 
 ### TEs in each chromosome
-```{r chr breakdown, echo = F, warnings = F}
-chrfeatures
+```{r chr breakdown, echo = F, warning = F}
+suppressWarnings(chrfeatures)
 ```
 
-## Heatmaps {.tabset .tabset-pills}
+## Heatmaps {.tabset .tabset-pills .tabset-fade}
 
 ### All 
-```{r DAC heatmap, echo = F, warnings = F}
+```{r DAC heatmap, echo = F, warning = F}
 heatmaply(mat, k_row = 3, k_col = 3,
           show_dendrogram = c(T, F),
           grid_size = 0.01,
@@ -178,7 +179,7 @@ heatmaply(mat, k_row = 3, k_col = 3,
 
 ### No DAC
 In -DAC heatmaps, it's weird that the PAs of the C3H10T12 experiment doesn't group together. The TKOs group together.  
-```{r no DAC heatmap, echo = F, warnings = F}
+```{r no DAC heatmap, echo = F, warning = F}
 heatmaply(matD, k_row = 3, k_col = 3,
           show_dendrogram = c(T, F),
           grid_size = 0.01,
@@ -190,14 +191,14 @@ heatmaply(matD, k_row = 3, k_col = 3,
 
 
 ## Differentially expressed genes 
-All samples were compared against the pooled PA samples of both `C3H10T12` and `decitabine` experiments. Pooled PA further reduces possible experiment-specific differential expression of certain genes. As expected though, H33WT had the lease number of DEGs compared to PA, as it should be. TKO had a lot of down-regulated non-gene elements.
-```{r DEGs, echo = F, warnings = F}
+All samples were compared against the pooled PA samples of both `C3H10T12` and `decitabine` experiments. Pooled PA further reduces possible experiment-specific differential expression of certain genes. As expected though, H33WT had the lease number of DEGs compared to PA. TKO had a lot of down-regulated non-gene elements?.
+```{r DEGs, echo = F, warning = F}
 buttonplot
 ```
 
 ### Persistent DEG?
 Even with pooling samples there were 40 genes that were differentially expressed in all the pair-wise comparisons of samples against PA.  
-```{r intersig, echo = F, warnings = F}
+```{r intersig, echo = F, warning = F}
 heatmaply(as.matrix(intersig), height = 900, fontsize_row = 9) %>%
   layout(xaxis = list(tickfont = list(size = 9)),
          yaxis = list(tickfont = list(size = 9, color = "red")))
@@ -206,3 +207,149 @@ heatmaply(as.matrix(intersig), height = 900, fontsize_row = 9) %>%
 ### RepeatMasker locale
 Coming soon...  
 
+## Part 2: Unpooling the samples {.tabset .tabset-pills}
+In the analyses above, I spooled several samples that had the same treatment across different experiments, namely the PAs, SETD2KO, H33K36R and H33K36M. Here I split the samples based on their experiment for analysis. I did not include the +DAC samples in the analysis of the decitabine experiment group because.
+
+### C3H10T12  {.tabset}
+This group has two H3.3 mtuation samples and 3 KO mutation samples compred against PA.  
+
+#### DEG
+```{r C3HDEG, echo = F, warning = F}
+load("D:/PhD/Analysis/10T/C3Honly.RData")
+buttonplotC
+```
+
+#### FC Dist {.tabset .tabset-pills}
+
+##### H33K36M
+```{r h33c3hhist, echo = F, warning = F}
+ggplot(H33K36M$sample, aes(x = H33K36M$sample$log2FoldChange, 
+                           fill = H33K36M$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~H33K36M$sample$feature, scales = "free_y") 
+```
+
+
+##### H33K36R
+```{r hrc3hhist, echo = F, warning = F}
+ggplot(H33K36R$sample, aes(x = H33K36R$sample$log2FoldChange, 
+                           fill = H33K36R$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~H33K36R$sample$feature, scales = "free_y") 
+```
+
+
+##### SETD2KO
+```{r setc3hhist, echo = F, warning = F}
+ggplot(SETD2KO$sample, aes(x = SETD2KO$sample$log2FoldChange, 
+                           fill = SETD2KO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~SETD2KO$sample$feature, scales = "free_y") 
+```
+
+
+##### NSD12DKO
+```{r nsdc3hhist, echo = F, warning = F}
+ggplot(NSD12DKO$sample, aes(x = NSD12DKO$sample$log2FoldChange, 
+                           fill = NSD12DKO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~NSD12DKO$sample$feature, scales = "free_y") 
+```
+
+
+##### TKO
+```{r tkoc3hhist, echo = F, warning = F}
+ggplot(TKO$sample, aes(x = TKO$sample$log2FoldChange, 
+                           fill = TKO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 13)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~TKO$sample$feature, scales = "free_y") 
+```
+
+
+#### Common DEGs
+There are **491** DEGs common between all 5 pairwise comparisons with **29,353** unique DEGs including the 491 shared DEGs.  
+```{r heatmapC, echo = F, warning = F}
+heatmapC
+```
+
+### Decitabine {.tabset}
+Comparing each of the treatment samples to PA, not looking at +DAC, we know that one has a lot more TEs.
+
+
+#### DEG 
+```{r exphist, echo = F, warning = F}
+load("D:/PhD/Analysis/10T/deconly.RData")
+
+buttonplotD
+```
+
+#### FC Dist {.tabset .tabset-pills}
+Distribution of fold changes for each genomic feature. 
+
+##### H33K36M
+```{r h33dachist, echo = F, warning = F}
+ggplot(H33K36M$sample, aes(x = H33K36M$sample$log2FoldChange, 
+                           fill = H33K36M$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~H33K36M$sample$feature, scales = "free_y") 
+```
+
+##### NSD12DKO
+```{r nsd12dachist, echo = F, warning = F}
+ggplot(NSD12DKO$sample, aes(x = NSD12DKO$sample$log2FoldChange, 
+                           fill = NSD12DKO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~NSD12DKO$sample$feature, scales = "free_y") 
+```
+
+##### SETD2KO
+```{r setd2dachist, echo = F, warning = F}
+ggplot(SETD2KO$sample, aes(x = SETD2KO$sample$log2FoldChange, 
+                           fill = SETD2KO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~SETD2KO$sample$feature, scales = "free_y") 
+```
+
+
+#### Common DEGs
+There are **3,814** differentially expressed genes found in all 3 of the sample comparisons against `PA_decitabine`, but there are **22,426** unique differentially expressed genes between the 3 samples (including the **3,814** overlapping ones). Most of the intersecting DEGs have low-ish fold changes.  
+
+
+Screenshot of heatmap to prevent lagging on the web browser
+![excuse the bad screenshot](./pics/Heatmapdecitabine.png)
+
+
+### Alphabet
+In this group, there is only the comparison of the mutation samples against H33WT.
