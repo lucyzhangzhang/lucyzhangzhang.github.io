@@ -4,6 +4,7 @@ wd <- "D:/PhD/Analysis/10T/"
 setwd(wd)
 rawdir <- paste0(wd, "/telocal/")
 outdir <- paste0(wd, "/pics/")
+load("C3Honly.RData")
 
 # libs
 library(DESeq2)
@@ -52,12 +53,12 @@ vst <- varianceStabilizingTransformation(dds)
 
 save(dds, file = "splitC3H.RData")
 ddist <- dist(t(assay(vst)))
-mat <- as.matrix(ddist)
+matC <- as.matrix(ddist)
 rownames(mat) <- colnames(mat) <- dds$file
 heatmap.2(mat, trace = "none", margin = c(15,15))
 library(plotly)
 library(heatmaply)
-heatmaply(mat, k_row = 3, k_col = 3)
+heatmapC <- heatmaply(matC, k_row = 3, k_col = 3)
 
 features <- read.table("data/TE_split.tab", header = T)
 features_trunc <- data.frame(name = features$ID, feature = features$class)
@@ -124,11 +125,11 @@ updatemenusC <- list(
 buttonplotC <- {plot_ly(H33K36M$counts, x = ~H33K36M$counts$Feature, y = ~H33K36M$counts$PosFoldChange, type = "bar", 
             name = "+FoldChange", marker = list(color = '#ff7f0e'),
             text = ~H33K36M$counts$PosFoldChange, textposition = "outside",
-            textfont = list(color = '#ff7f0e'), visible = F) %>%
+            textfont = list(color = '#ff7f0e'), visible = T) %>%
   add_trace(H33K36M$counts, x = ~H33K36M$counts$Feature, y = ~H33K36M$counts$NegFoldChange, type = "bar", 
             name = "-FoldChange", marker = list(color = '#1f77b4'),
             text = ~H33K36M$counts$NegFoldChange, textposition = "outside",
-            textfont = list(color = '#1f77b4'), visible = F) %>%
+            textfont = list(color = '#1f77b4'), visible = T) %>%
   add_trace(H33K36R$counts, x = ~H33K36R$counts$Feature, y = ~H33K36R$counts$PosFoldChange, type = "bar", 
             name = "+FoldChange", marker = list(color = '#ff7f0e'),
             text = ~H33K36R$counts$PosFoldChange, textposition = "outside",
@@ -166,8 +167,7 @@ buttonplotC <- {plot_ly(H33K36M$counts, x = ~H33K36M$counts$Feature, y = ~H33K36
          updatemenus = updatemenusC)}
 buttonplotC
 
-save(buttonplotC,  updatemenusC, H33K36M, H33K36R, TKO, NSD12DKO, SETD2KO, file = "C3Honly.RData")
-
+save(buttonplotC,  updatemenusC, H33K36M, H33K36R, TKO, NSD12DKO, SETD2KO, heatmapC, file = "C3Honly.RData")
 groupInter <- intersect(intersect(intersect(H33K36M$sample$name, H33K36R$sample$name), 
                                   intersect(SETD2KO$sample$name, NSD12DKO$sample$name)), 
                         TKO$sample$name)

@@ -20,7 +20,7 @@ load("D:/PhD/Analysis/10T/buttonplot.RData")
 ```
 C3H/10T mouse embryonic cells are generated from C3H/HeJ mice. Are sensitive to inhibition of cell division and have unusual stability after prolonged culture. 10T cell line is used to study cancer, cardiovascular biology and infectious diseases.  
 
-## PCAs {.tabset .tabset-pills}
+## PCAs {.tabset .tabset-pills .tabset-fade}
 
 Instead of regularized log transformation (`rlogTransformation()`) on the reads, I did variance stabilizing transformation (`varianceStabilizingTransformation()`) because my computer crashes with rld with insufficient memory. Principal components were calculated using the top 500 genes with the greatest variance between samples.
 
@@ -140,7 +140,7 @@ plot_pca(otherplotsD$scores, otherplotsD$perc,
          condition = conditionD)
 ```
 
-## Breakdown of genomic features {.tabset .tabset-pills}
+## Breakdown of genomic features {.tabset .tabset-pills .tabset-fade}
 In the top 500 genes with the highest variance between the samples. The y-axis represents the variance of these genes between samples. Variance is calculated from the normalized counts after performing `varianceStabilizingTransformation()`. 
 
 ### All samples 
@@ -207,7 +207,7 @@ heatmaply(as.matrix(intersig), height = 900, fontsize_row = 9) %>%
 ### RepeatMasker locale
 Coming soon...  
 
-## Part 2: Unpooling the samples {.tabset .tabset-pills}
+## Part 2: Unpooling the samples {.tabset .tabset-pills .tabset-fade}
 In the analyses above, I spooled several samples that had the same treatment across different experiments, namely the PAs, SETD2KO, H33K36R and H33K36M. Here I split the samples based on their experiment for analysis. I did not include the +DAC samples in the analysis of the decitabine experiment group because.
 
 ### C3H10T12  {.tabset}
@@ -219,7 +219,7 @@ load("D:/PhD/Analysis/10T/C3Honly.RData")
 buttonplotC
 ```
 
-#### FC Dist {.tabset .tabset-pills}
+#### FC Dist {.tabset .tabset-pills .tabset-fade}
 
 ##### H33K36M
 ```{r h33c3hhist, echo = F, warning = F}
@@ -303,7 +303,7 @@ load("D:/PhD/Analysis/10T/deconly.RData")
 buttonplotD
 ```
 
-#### FC Dist {.tabset .tabset-pills}
+#### FC Dist {.tabset .tabset-pills .tabset-fade}
 Distribution of fold changes for each genomic feature. 
 
 ##### H33K36M
@@ -350,6 +350,74 @@ There are **3,814** differentially expressed genes found in all 3 of the sample 
 Screenshot of heatmap to prevent lagging on the web browser
 ![excuse the bad screenshot](./pics/Heatmapdecitabine.png)
 
+## Remove C3H10T rep_1 {.tabset}
+Since the replicate 1's cluster together in a separate branch compared to the 2nd and 3rd replicates, what happens when I try to remove it from the analysis? In these pairwise comparisons, ther are **491** genes that are up-regulated in all 5 samples compared to PA_C3H10T12 and **29,353** unique differentially expressed genes including the previous 491.  
 
-### Alphabet
-In this group, there is only the comparison of the mutation samples against H33WT.
+### DEG
+```{r c3hsplit fc, echo = F, warning = F}
+load("D:/PhD/Analysis/10T/C3Hsplitonly.RData")
+buttonplotC2
+```
+
+### FC Dist {.tabset .tabset-pills .tabset-fade}
+
+#### H33K36M
+```{r c3hsplitdistH33K36M, echo = F, warning = F}
+ggplot(H33K36M$sample, aes(x = H33K36M$sample$log2FoldChange, 
+                           fill = H33K36M$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~H33K36M$sample$feature, scales = "free_y") 
+```
+
+
+#### H33K36R
+```{r c3hsplitdistH33K36R, echo = F, warning = F}
+ggplot(H33K36R$sample, aes(x = H33K36R$sample$log2FoldChange, 
+                           fill = H33K36R$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~H33K36R$sample$feature, scales = "free_y") 
+```
+
+#### NSD12DKO
+```{r c3hsplitdistNSD12DKO, echo = F, warning = F}
+ggplot(NSD12DKO$sample, aes(x = NSD12DKO$sample$log2FoldChange, 
+                           fill = NSD12DKO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~NSD12DKO$sample$feature, scales = "free_y") 
+```
+
+#### SETD2KO
+```{r c3hsplitdistSETD2KO, echo = F, warning = F}
+ggplot(SETD2KO$sample, aes(x = SETD2KO$sample$log2FoldChange, 
+                           fill = SETD2KO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~SETD2KO$sample$feature, scales = "free_y") 
+```
+
+#### TKO
+```{r c3hsplitdistTKO, echo = F, warning = F}
+ggplot(TKO$sample, aes(x = TKO$sample$log2FoldChange, 
+                           fill = TKO$sample$feature)) + 
+  geom_histogram(alpha = 1, binwidth = 0.5) +
+  scale_fill_manual(values = viridis(n = 12)) + 
+  labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)",
+       fill = "Feature") +
+  theme_bw() + 
+  facet_wrap(~TKO$sample$feature, scales = "free_y") 
+```
