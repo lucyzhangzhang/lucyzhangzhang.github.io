@@ -164,6 +164,12 @@ plot_ly(rpmkD, x = rpmkD$name, y = rpmkD$dds, color = rpmkD$X4,
 suppressWarnings(chrfeatures)
 ```
 
+### TE locale
+```{r TE all locale, echo = F, warning = F}
+load("D:/PhD/Analysis/10T/relplot.RData")
+relplot
+```
+
 ## Heatmaps {.tabset .tabset-pills .tabset-fade}
 
 ### All 
@@ -204,8 +210,6 @@ heatmaply(as.matrix(intersig), height = 900, fontsize_row = 9) %>%
          yaxis = list(tickfont = list(size = 9, color = "red")))
 ```
 
-### RepeatMasker locale
-Coming soon...  
 
 ## Part 2: Unpooling the samples {.tabset .tabset-pills .tabset-fade}
 In the analyses above, I spooled several samples that had the same treatment across different experiments, namely the PAs, SETD2KO, H33K36R and H33K36M. Here I split the samples based on their experiment for analysis. I did not include the +DAC samples in the analysis of the decitabine experiment group because.
@@ -284,6 +288,52 @@ ggplot(TKO$sample, aes(x = TKO$sample$log2FoldChange,
   theme_bw() + 
   facet_wrap(~TKO$sample$feature, scales = "free_y") 
 ```
+
+#### TE locale {.tabset .tabset-pills .tabset-fade}
+Simple categorization of the TE locale as "Within", "Spanning", "Overlap" or "Intergenic" (see [TE key][TE key]).
+
+##### H33K36M
+```{r c3TElocH33K36M, echo = F, warning = F}
+plot_ly(H33K36M_c, x = ~H33K36M_c$feature, color = ~H33K36M_c$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "H33K36M diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+##### H33K36R
+```{r c3TElocH33K36R, echo = F, warning = F}
+plot_ly(H33K36R_c, x = ~H33K36R_c$feature, color = ~H33K36R_c$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "H33K36R diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+
+##### NSD12DKO
+```{r c3TElocNSD12DKO, echo = F, warning = F}
+plot_ly(NSD12DKO_c, x = ~NSD12DKO_c$feature, color = ~NSD12DKO_c$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "NSD12DKO diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+
+##### SETD2KO
+```{r c3TElocSETD2KO, echo = F, warning = F}
+plot_ly(SETD2KO_c, x = ~SETD2KO_c$feature, color = ~SETD2KO_c$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "SETD2KO diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+##### TKO
+```{r c3TElocTKO, echo = F, warning = F}
+plot_ly(TKO_c, x = ~TKO_c$feature, color = ~TKO_c$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "TKO diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
 
 
 #### Common DEGs
@@ -421,3 +471,56 @@ ggplot(TKO$sample, aes(x = TKO$sample$log2FoldChange,
   theme_bw() + 
   facet_wrap(~TKO$sample$feature, scales = "free_y") 
 ```
+
+### TE locale {.tabset .tabset-pills .tabset-fade}
+Simple categorization of the TE locale as "Within", "Spanning", "Overlap" or "Intergenic" (see [TE key][TE key]).
+
+#### H33K36M
+```{r c3splitTElocH33K36M, echo = F, warning = F}
+plot_ly(H33K36M_r, x = ~H33K36M_r$feature, color = ~H33K36M_r$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "H33K36M diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+#### H33K36R
+```{r c3splitTElocH33K36R, echo = F, warning = F}
+plot_ly(H33K36R_r, x = ~H33K36R_r$feature, color = ~H33K36R_r$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "H33K36R diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+
+#### NSD12DKO
+```{r c3splitTElocNSD12DKO, echo = F, warning = F}
+plot_ly(NSD12DKO_r, x = ~NSD12DKO_r$feature, color = ~NSD12DKO_r$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "NSD12DKO diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+
+#### SETD2KO
+```{r c3splitTElocSETD2KO, echo = F, warning = F}
+plot_ly(SETD2KO_r, x = ~SETD2KO_r$feature, color = ~SETD2KO_r$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "SETD2KO diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+#### TKO
+```{r c3splitTElocTKO, echo = F, warning = F}
+plot_ly(TKO_r, x = ~TKO_r$feature, color = ~TKO_r$relation, type = "histogram") %>%
+  layout(barmode = "stack", title = "TKO diff. expr. TE distribution",
+         xaxis = list(title = "Feature"),
+         yaxis = list(title = "Count"))
+```
+
+
+
+
+#### TE key
+![classification of TE locales](./pics/TElocale.png)  
+
+
