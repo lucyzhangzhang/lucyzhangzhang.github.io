@@ -51,7 +51,14 @@ dds <- DESeq(dds)
 # transformation
 vst <- varianceStabilizingTransformation(dds)
 
-save(dds, file = "splitC3H.RData")
+assay_vst <- vst
+assay(assay_vst) <- limma::removeBatchEffect(assay(assay_vst), assay_vst$sample)
+assay_vst <- assay(assay_vst)
+# matD <- as.matrix(dist(t(assay_vst)))
+# rownames(matD) <- colnames(matD) <- dds$file
+# heatmap.2(mat, trace = "none", margin = c(15,15))
+rv <- data.frame(name = rownames(dds), dds = rowVars(assay_vst))
+# save(dds, file = "splitC3H.RData")
 ddist <- dist(t(assay(vst)))
 matC <- as.matrix(ddist)
 rownames(mat) <- colnames(mat) <- dds$file
@@ -59,6 +66,11 @@ heatmap.2(mat, trace = "none", margin = c(15,15))
 library(plotly)
 library(heatmaply)
 heatmapC <- heatmaply(matC, k_row = 3, k_col = 3)
+
+# Make a heatmap using the top 500 most variable genes
+
+
+
 
 features <- read.table("data/TE_split.tab", header = T)
 features_trunc <- data.frame(name = features$ID, feature = features$class)
@@ -167,7 +179,8 @@ buttonplotC <- {plot_ly(H33K36M$counts, x = ~H33K36M$counts$Feature, y = ~H33K36
          updatemenus = updatemenusC)}
 buttonplotC
 
-save(buttonplotC,  updatemenusC, H33K36M, H33K36R, TKO, NSD12DKO, SETD2KO, heatmapC, file = "C3Honly.RData")
+save(buttonplotC,  updatemenusC, H33K36M, H33K36R, TKO, NSD12DKO, SETD2KO, heatmapC, 
+      H33K36M_c, H33K36R_c, TKO_c, NSD12DKO_c, SETD2KO_c, file = "C3Honly.RData")
 groupInter <- intersect(intersect(intersect(H33K36M$sample$name, H33K36R$sample$name), 
                                   intersect(SETD2KO$sample$name, NSD12DKO$sample$name)), 
                         TKO$sample$name)
@@ -185,3 +198,15 @@ ggplot(H33K36M$sample, aes(x = H33K36M$sample$log2FoldChange,
   labs(x = "Log Fold Change Distribution", y = "Number of DEGs (bin = 0.5)") +
   theme_bw() + 
   facet_wrap(~H33K36M$sample$feature, scales = "free_y")
+
+relation <- read.table("data/TErelation.tab", header = T)
+H33K36M_c <- H33K36M$sample[!grepl("ENSMUS.*", H33K36M$sample$name), ] %>% 
+  dplyr::select(name, feature) %>% left_join(., relation, by = c("name" = "TE"))
+H33K36R_c <- H33K36R$sample[!grepl("ENSMUS.*", H33K36R$sample$name), ] %>% 
+  dplyr::select(name, feature) %>% left_join(., relation, by = c("name" = "TE"))
+SETD2KO_c <- SETD2KO$sample[!grepl("ENSMUS.*", SETD2KO$sample$name), ] %>% 
+  dplyr::select(name, feature) %>% left_join(., relation, by = c("name" = "TE"))
+NSD12DKO_c <- NSD12DKO$sample[!grepl("ENSMUS.*", NSD12DKO$sample$name), ] %>% 
+  dplyr::select(name, feature) %>% left_join(., relation, by = c("name" = "TE"))
+TKO_c <- TKO$sample[!grepl("ENSMUS.*", TKO$sample$name), ] %>% 
+  dplyr::select(name, feature) %>% left_join(., relation, by = c("name" = "TE"))

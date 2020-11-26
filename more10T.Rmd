@@ -1,0 +1,36 @@
+---
+title: "More 10T"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+```{r load data, include = F, warning = F}
+library(plotly)
+library(heatmaply)
+library(ggplot2)
+library(gplots)
+library(viridis)
+```
+
+The other page is getting long.
+
+## PCA with top 500 most variable {.tabset .tabset-pills .tabset-fade}
+Taking the top 500 most variable genes among the samples and generating a regular old Euclidean distance matrix.
+
+### Annot+TE
+```{r tripca1, echo = F, warning = F}
+load("D:/PhD/Analysis/10T/reinnier.RData")
+All_HM
+
+```
+
+### Annot only
+```{r tripca2, echo = F, warning = F}
+ENS_HM
+```
+
+### TE only
+```{r tripca3, echo = F, warning = F}
+TE_HM
+```
