@@ -4,6 +4,7 @@ output:
   html_document:
     toc: yes
     toc_float: yes
+    number_sections: false
 ---
 ```{r load data, include = F, warning = F}
 library(plotly)
@@ -33,4 +34,65 @@ ENS_HM
 ### TE only
 ```{r tripca3, echo = F, warning = F}
 TE_HM
+```
+
+## {.unlisted .unnumbered}
+
+<details>
+<summary>Size Factors</summary>
+**Size factor all entries**
+```
+                   dds.sizeFactor
+H33K36M_C3H10T1_1       1.9754626
+H33K36M_C3H10T1_2       0.7887794
+H33K36M_C3H10T1_3       0.3056923
+H33K36R_C3H10T1_1       1.3801394
+H33K36R_C3H10T1_2       0.3812469
+H33K36R_C3H10T1_3       0.3979667
+NSD12DKO_C3H10T1_1      1.9744437
+NSD12DKO_C3H10T1_2      0.7853220
+NSD12DKO_C3H10T1_3      0.6446567
+PA_C3H10T1_1            2.1517784
+PA_C3H10T1_2            0.3786161
+PA_C3H10T1_3            0.8761740
+SETD2KO_C3H10T1_1       2.3758762
+SETD2KO_C3H10T1_2       0.6693181
+SETD2KO_C3H10T1_3       0.4933132
+TKO_C3H10T1_1           2.7458456
+TKO_C3H10T1_2           2.6752406
+TKO_C3H10T1_3           2.9033106
+```
+
+**Size factor annot only**
+```
+                   ddsSub.sizeFactor
+H33K36M_C3H10T1_1          1.9958859
+H33K36M_C3H10T1_2          0.7398523
+H33K36M_C3H10T1_3          0.2721026
+H33K36R_C3H10T1_1          1.3409255
+H33K36R_C3H10T1_2          0.3396584
+H33K36R_C3H10T1_3          0.3556429
+NSD12DKO_C3H10T1_1         1.9671956
+NSD12DKO_C3H10T1_2         0.7176141
+NSD12DKO_C3H10T1_3         0.5812148
+PA_C3H10T1_1               2.1461076
+PA_C3H10T1_2               0.3208860
+PA_C3H10T1_3               0.7840284
+SETD2KO_C3H10T1_1          2.3940446
+SETD2KO_C3H10T1_2          0.6030431
+SETD2KO_C3H10T1_3          0.4408191
+TKO_C3H10T1_1              4.0540994
+TKO_C3H10T1_2              4.1465894
+TKO_C3H10T1_3              4.1640333 
+```
+
+</details>
+
+## Normalized using size factors of only protein coding genes
+`grep 'protein_coding' annotation.gtf | perl -ne '/^.+?\tgene\t.+?"(ENSMUS.+?)".+$/ && print $1`
+
+```{r sf, echo = F, warning = F}
+load("D:/PhD/Analysis/10T/C3hsizeFactor.RData")
+buttonplotSF
+
 ```

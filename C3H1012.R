@@ -9,12 +9,11 @@ load("C3Honly.RData")
 # libs
 library(DESeq2)
 library(plotly)
-library(gplots)
+# library(gplots)
 library(dplyr)
 library(tidyverse)
 library(GenomicFeatures)
 library(RColorBrewer)
-library(ggrepel)
 design <- read.table("meta", header = T)
 rownames(design) <- design$file
 design <- design[grepl("C3H10T1", design$batch),]
@@ -49,16 +48,19 @@ keep <- rowSums(counts(dds)) > 0
 dds <- dds[keep,]
 dds <- DESeq(dds)
 # transformation
-vst <- varianceStabilizingTransformation(dds)
+# vst <- varianceStabilizingTransformation(dds)
 
 assay_vst <- vst
-assay(assay_vst) <- limma::removeBatchEffect(assay(assay_vst), assay_vst$sample)
+#assay(assay_vst) <- limma::removeBatchEffect(assay(assay_vst), assay_vst$sample)
 assay_vst <- assay(assay_vst)
 # matD <- as.matrix(dist(t(assay_vst)))
 # rownames(matD) <- colnames(matD) <- dds$file
 # heatmap.2(mat, trace = "none", margin = c(15,15))
 rv <- data.frame(name = rownames(dds), dds = rowVars(assay_vst))
 # save(dds, file = "splitC3H.RData")
+
+
+
 ddist <- dist(t(assay(vst)))
 matC <- as.matrix(ddist)
 rownames(mat) <- colnames(mat) <- dds$file
@@ -67,20 +69,44 @@ library(plotly)
 library(heatmaply)
 heatmapC <- heatmaply(matC, k_row = 3, k_col = 3)
 
+
+resTKO <- results(dds, contrast = c("sample", "TKO", "PA"))
+resTKO2 <- resTKO[grepl("ENSMUS.*", rownames(resTKO)), ]
+plotMA(resTKO2, main = "Uncorrected Size Factors")
+
 # Make a heatmap using the top 500 most variable genes
+rvTop500 <- rv %>% top_n(500, dds) %>% arrange(desc(dds))
+rvTopEMS <- rv %>% dplyr::filter(grepl('ENSMUS.*', name)) %>% top_n(500, dds) %>% arrange(desc(dds))
+rvTopTE <-  rv %>% dplyr::filter(!grepl('ENSMUS.*', name)) %>% top_n(500, dds) %>% arrange(desc(dds))
 
 
+vstTop <- assay_vst[which(rownames(assay_vst) %in% rvTopEMS$name), ]
+vstTopAll <- assay_vst[which(rownames(assay_vst) %in% rvTop500$name), ]
+vstTopTE <- assay_vst[which(rownames(assay_vst) %in% rvTopTE$name), ]
+matENS500 <- dist(t(vstTop))
+matENS500 <- as.matrix(matENS500)
+ENS_HM <- heatmaply::heatmaply(matENS500)
 
+matAll500 <- dist(t(vstTopAll))
+matAll500 <- as.matrix(matAll500)
+All_HM <- heatmaply::heatmaply(matAll500) 
+
+matTE500 <- dist(t(vstTopTE))
+matTE500 <- as.matrix(matTE500)
+TE_HM <- heatmaply::heatmaply(matTE500)
+
+combined_HM <- subplot(All_HM, ENS_HM, TE_HM, nrows = 3)
+save(matENS500, All_HM, TE_HM, matAll500, matTE500, ENS_HM, combined_HM, file = "reinnier.RData")
 
 features <- read.table("data/TE_split.tab", header = T)
 features_trunc <- data.frame(name = features$ID, feature = features$class)
 getResAndCounts <- function(dds, ... ) {
 sample <- results(dds, ... )
-sample <- tibble::rownames_to_column(data.frame(sample), var = "name")
-sample <- sample %>% filter(padj <= 0.05) %>% left_join(., features_trunc, by = "name") 
-sample <- mutate(sample, feature = replace_na(as.vector(sample$feature), "ENSMUS"))
-sample_pos <- sample %>% filter(log2FoldChange > 0) %>% dplyr::select(name, feature)
-sample_neg <- sample %>% filter(log2FoldChange < 0) %>% dplyr::select(name, feature)
+sample <- tibble::rownames_to_column(data.frame(sample), var = "name") %>%
+  filter(padj <= 0.05) %>% left_join(., features_trunc, by = "name") %>%
+  mutate(sample, feature = replace_na(as.vector(feature), "ENSMUS"))
+sample_pos <- sample %>% filter(log2FoldChange > 2) %>% dplyr::select(name, feature)
+sample_neg <- sample %>% filter(log2FoldChange < -2) %>% dplyr::select(name, feature)
 counts <- merge(data.frame(table(sample_pos$feature)), 
                 data.frame(table(sample_neg$feature)), 
                 by = "Var1", all = T)
