@@ -15,6 +15,7 @@ library(viridis)
 library(UpSetR)
 ```
 
+
 The other page is getting long.
 
 ## PCA with top 500 most variable {.tabset .tabset-pills .tabset-fade}
@@ -112,3 +113,10 @@ Wow there are acually 25 TEs that were differentially expressed at a level great
 ```{r setsplot, echo = F, warning = F}
 upset(fromList(DEG_TEs), order.by = "degree")
 ```
+
+<details>
+<summary>Intersecting genes</summary>
+```{r inter, size = "small", echo = F}
+knitr::kable(IN_full[,-1])
+```
+</details>
