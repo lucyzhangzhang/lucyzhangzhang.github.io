@@ -12,6 +12,7 @@ library(heatmaply)
 library(ggplot2)
 library(gplots)
 library(viridis)
+library(UpSetR)
 ```
 
 The other page is getting long.
@@ -88,11 +89,26 @@ TKO_C3H10T1_3              4.1640333
 
 </details>
 
-## Normalized using size factors of only protein coding genes
-`grep 'protein_coding' annotation.gtf | perl -ne '/^.+?\tgene\t.+?"(ENSMUS.+?)".+$/ && print $1`
+## Normalized using size factors of only protein coding genes {#DEG}
+`grep 'protein_coding' annotation.gtf | perl -ne '/^.+?\tgene\t.+?"(ENSMUS.+?)".+$/ && print $1'`
 
 ```{r sf, echo = F, warning = F}
 load("D:/PhD/Analysis/10T/C3hsizeFactor.RData")
 buttonplotSF
 
+```
+
+## Intergenic TEs Only
+Graph of all the differentially expressed TEs, either filtered by the > 2 log2FoldChange cutoff.  The RefSeq annotations (ENSMUS) are not included in these graphs so note the different y axis values compared to the [graph above](#DEG)
+
+```{r intergenic, echo = F, warning = F}
+#  or no filter. I think the no filter list of genes may also be of interest especially of the expression of those TEs were particularly high.
+buttonplotIN
+```
+
+### Intersection
+Wow there are acually 25 TEs that were differentially expressed at a level greater than 2 LFC between all the pairwise comparisons. What are those 25?
+
+```{r setsplot, echo = F, warning = F}
+upset(fromList(DEG_TEs), order.by = "degree")
 ```
