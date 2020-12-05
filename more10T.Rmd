@@ -115,8 +115,14 @@ upset(fromList(DEG_TEs), order.by = "degree")
 ```
 
 <details>
-<summary>Intersecting genes</summary>
+<summary>H33K36M & H33K36R & SETD2KO & NSD12DKO & TKO</summary>
 ```{r inter, size = "small", echo = F}
 knitr::kable(IN_full[,-1])
 ```
 </details>
+  
+<details>
+<summary>H33K36M & H33K36R & SETD2KO & NSD12DKO</summary>
+```{r inter4, size = "small", echo = F}
+knitr::kable(IN_4[,-1])
+```
