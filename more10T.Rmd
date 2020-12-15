@@ -147,3 +147,5 @@ test %>% ggplot(aes(x = Reversed, y = log2FoldChange,
 ```
 
 In H33K36R there is an outlier with a great increase in fold change (>20 log2FC), this TE is on the opposite direction of nearby genes *Suv39h2*, *Gm13184* and *Gapvd1*. *Suv39H2* seems to be a H3K9me3 methyltransferase that uses monomethyl H3K9 as a substrate. IDK what are the implications of this, would be interesting to look at the histone methylation patterns around this area (as well as the raw reas to see if it's because of lack of coverage).
+
+I tried looking at the GO enrichment of the nearby genes in each quadrant and **Alternative splicing** seems to come up in almost every group. Given that is a common GO term and is probably associated with a lot of genes.  
