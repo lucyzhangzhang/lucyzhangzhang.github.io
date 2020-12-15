@@ -126,3 +126,24 @@ knitr::kable(IN_full[,-1])
 ```{r inter4, size = "small", echo = F}
 knitr::kable(IN_4[,-1])
 ```
+
+-----  
+
+
+## Genic TEs Only
+There are some interesting observations about those genic TEs. The TEs below were sorted by whether they were in the reverse reading frame of the gene that they overlap with. I.e "No" = Same reading frame as overlapping gene, "Yes" = Opposite reading frame as overlapping gene. Not Only that, since there are sometimes genes that run both ways while overlapping each other, if at least one of the genes is on the opposite reading frame as the TE, the TE would be classified as a "Yes". Despite this, there seems to be more down-regulated TEs that are on the same reading frame as a gene and more up-regulated TEs that are on the opposite reading frame of a gene.
+
+```{r genic TEs, echo = F}
+load("D:/PhD/Analysis/10T/data/genicLFC0.5.RData")
+test %>% ggplot(aes(x = Reversed, y = log2FoldChange, 
+                    color = interaction(ifelse(log2FoldChange>0, "Pos", "Neg"), Reversed))) + 
+  geom_jitter(width = 0.3) +
+  facet_wrap(~Sample, nrow = 1) +
+  theme_bw() + 
+  labs(y = "Log2 Fold Change") +
+  scale_color_manual(labels = c("No:LFC < -0.5", "No:LFC > 0.5", "Yes:LFC < -0.5", "Yes:LFC > 0.5"),
+                     values = c("#7bb3e0", "#1e7cc7", "#db8f51", "#c25917")) + 
+  theme(legend.title = element_blank())
+```
+
+In H33K36R there is an outlier with a great increase in fold change (>20 log2FC), this TE is on the opposite direction of nearby genes *Suv39h2*, *Gm13184* and *Gapvd1*. *Suv39H2* seems to be a H3K9me3 methyltransferase that uses monomethyl H3K9 as a substrate. IDK what are the implications of this, would be interesting to look at the histone methylation patterns around this area (as well as the raw reas to see if it's because of lack of coverage).

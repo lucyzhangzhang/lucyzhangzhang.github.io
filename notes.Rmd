@@ -1,0 +1,26 @@
+---
+title: "Chromatin"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: false
+---
+
+Chromatin is a dynamic structure that can respond to external cues and regulate gene expression. 
+  
+## Histone modifications
+  Histone modifications are a key regulatory mechanism for this cellular structure. Histones are proteins that DNA wraps around, depending on the modifications on the histones it can determine the active/inactive status of that chromatin region. Histone protein residues can be highly modified depending on environmental signals and by a multitude of histone modifying enzymes.  
+
+### Acetylation
+Regulated by histone acetyltransferase (HAT) whose action is opposed by histone deacetylase (HDAC). Bringing an Ac group to the lysine neutralizes its positive charge and weakens interactions between histone and DNA. Histones can be acetylated in the tail region or at lysines because of protein mechanics.  
+
+### Phosphorylation
+Histones can be phosphorylated at serines, threonines and tyrosines. Commonly, but no exclusively, in the N-terminal tail. This is done with kinaese (+Pi) and phosphatases (-Pi). E.g. H3Y41 delivered by JAK2 kinase, Aurora B delivers genome-wide H3S10ph and H3S28ph during mitosis.   
+
+### Methylation
+  Methylation of histones can occur at lysines and arginines becaus of protein mechanics. Delivered by histone methyltransferase.  
+
+* H3K9me; SUV39H1
+ 
+## DNA modifications
