@@ -1,0 +1,36 @@
+---
+title: "Shiny"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, dev = 'pdf')
+library(shiny)
+library(viridis)
+library(gplots)
+library(dplyr)
+load("D:/PhD/Analysis/10T/data/TEslider.RData")
+
+TEplotgen <- function(num) {
+  rvTopTE <-  rv %>% dplyr::filter(!grepl('ENSMUS.*', name)) %>% top_n(num, dds) %>% arrange(desc(dds)) %>% top_n(-500, dds)
+  vstTopTE <- assay_vst[which(rownames(assay_vst) %in% rvTopTE$name), ]
+  matTE500 <- dist(t(vstTopTE))
+  matTE500 <- as.matrix(matTE500)
+  return(heatmap.2(matTE500, col = viridis(15),
+                   trace = "none", srtCol = 45,
+1115              margins = c(10,15),
+                   ))
+}
+```
+
+```{r slider, echo = F, fig.height=20}
+
+sliderInput("top_n", "Remove top n:", min = 0, max = 1000, value = 0, step = 100)
+
+renderPlot({
+#  top_n <- seq(0, 1000, by = 100)
+  height = 20
+  TEplotgen(input$top_n+500)
+})
+```

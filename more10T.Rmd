@@ -4,6 +4,7 @@ output:
   html_document:
     toc: yes
     toc_float: yes
+    toc_depth: 2
     number_sections: false
 ---
 ```{r load data, include = F, warning = F}
@@ -119,6 +120,7 @@ upset(fromList(DEG_TEs), order.by = "degree")
 ```{r inter, size = "small", echo = F}
 knitr::kable(IN_full[,-1])
 ```
+
 </details>
   
 <details>
@@ -148,4 +150,46 @@ test %>% ggplot(aes(x = Reversed, y = log2FoldChange,
 
 In H33K36R there is an outlier with a great increase in fold change (>20 log2FC), this TE is on the opposite direction of nearby genes *Suv39h2*, *Gm13184* and *Gapvd1*. *Suv39H2* seems to be a H3K9me3 methyltransferase that uses monomethyl H3K9 as a substrate. IDK what are the implications of this, would be interesting to look at the histone methylation patterns around this area (as well as the raw reas to see if it's because of lack of coverage).
 
-I tried looking at the GO enrichment of the nearby genes in each quadrant and **Alternative splicing** seems to come up in almost every group. Given that is a common GO term and is probably associated with a lot of genes.  
+I tried looking at the GO enrichment of the nearby genes in each quadrant and **Alternative splicing** seems to come up in almost every group. Given that is a common GO term and is probably associated with a lot of genes, or are there splicing variants associated with these genes because of the presence of these TEs. 
+
+
+
+## Filter TEs Diagnostic PCA {.tabset .tabset-pills}
+Dr. Bourque's advice is to remove the most variable TEs as those are more indicative of batch compared to treatment effects.
+
+### 500
+![](pics/500.png)
+
+### 600
+![](pics/600.png)
+
+
+### 700
+![](pics/700.png)
+
+
+### 800
+![](pics/800.png)
+
+
+### 900
+![](pics/900.png)
+
+
+### 1000
+![](pics/1000.png)
+
+
+### 2000
+![](pics/2000.png)
+
+### 3000
+![](pics/3000.png)
+
+### 4000
+![](pics/4000.png)
+
+### 5000
+![](pics/5000.png)
+
+
